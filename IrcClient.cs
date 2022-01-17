@@ -35,6 +35,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using NetIrc2.Capabilities;
 using NetIrc2.Details;
 using NetIrc2.Parsing;
 
@@ -56,6 +57,7 @@ namespace NetIrc2
         }
         Context _context;
         IrcString _clientVer;
+        private CapabilityContext _capabilityContext;
 
         static IrcClient()
         {
@@ -68,8 +70,11 @@ namespace NetIrc2
         public IrcClient()
         {
             CtcpPingInit();
+            _capabilityContext = new CapabilityContext(new BeginCapability());
             SyncRoot = new object();
         }
+        
+        public IrcClientConnectionOptions Options { get; private set; }
 
         /// <summary>
         /// Connects to an IRC server.
@@ -122,20 +127,17 @@ namespace NetIrc2
 
             Close();
 
-            if (options == null)
-            {
-                options = new IrcClientConnectionOptions();
-            }
+            Options = options ?? new IrcClientConnectionOptions();
 
-            if (options.Ssl)
+            if (Options.Ssl)
             {
-                if (options.SslHostname == null)
+                if (Options.SslHostname == null)
                 {
                     throw new ArgumentException("If Ssl is true, SslHostname must be set.", "options");
                 }
 
-                var sslStream = new SslStream(stream, false, options.SslCertificateValidationCallback);
-                sslStream.AuthenticateAsClient(options.SslHostname);
+                var sslStream = new SslStream(stream, false, Options.SslCertificateValidationCallback);
+                sslStream.AuthenticateAsClient(Options.SslHostname);
                 stream = sslStream;
             }
 
@@ -147,7 +149,7 @@ namespace NetIrc2
                 },
                 StartEvent = new ManualResetEvent(false),
                 Stream = stream,
-                SynchronizationContext = options.SynchronizationContext
+                SynchronizationContext = Options.SynchronizationContext
             };
 
             _context = context;

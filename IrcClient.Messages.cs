@@ -30,6 +30,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using NetIrc2.Events;
 using NetIrc2.Parsing;
 
@@ -274,7 +275,45 @@ namespace NetIrc2
                         OnGotChannelTopicChange(new ChannelTopicChangeEventArgs(@params[0], @params[1]));
                     }
                     break;
-
+                case "CAP":
+                    if (@params.Count >= 1)
+                    {
+                        OnCapabilityNegotiationChange(@params[0], @params[1], @params[2]);
+                    }
+                    break;
+                case "AUTHENTICATE":
+                    if (@params.Count >= 1)
+                    {
+                        switch (@params[0])
+                        {
+                            case "+":
+                                var command = $"AUTHENTICATE {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Options.SaslUsername}\x00{Options.SaslUsername}\x00{Options.SaslPassword}"))}";
+                                IrcCommand(command);
+                                break;
+                        }
+                    }
+                    break;
+                case "903":
+                    _capabilityContext.Negotiate(this);
+                    break;
+                case "901":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.RplLoggedOut, statement));
+                    break;
+                case "902":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.ErrNickLocked, statement));
+                    break;
+                case "904":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.ErrSaslFail, statement));
+                    break;
+                case "905":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.ErrSaslTooLong, statement));
+                    break;
+                case "906":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.ErrSaslAborted, statement));
+                    break;
+                case "907":
+                    OnGotIrcError(new IrcErrorEventArgs(IrcReplyCode.ErrSaslAlready, statement));
+                    break;
                 default:
                     if ((int)statement.ReplyCode >= 400 && (int)statement.ReplyCode < 600)
                     {

@@ -50,6 +50,7 @@ namespace NetIrc2
 
             lock (SyncRoot)
             {
+                _capabilityContext.Negotiate(this);
                 if (password != null)
                 {
                     IrcCommand("PASS", password);

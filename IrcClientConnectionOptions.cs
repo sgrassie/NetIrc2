@@ -26,6 +26,14 @@ namespace NetIrc2
             get;
             set;
         }
+        
+        /// <summary>
+        /// <c>true</c> to use SASL Authentication
+        /// </summary>
+        public bool UseSasl { get; set; }
+        
+        public string SaslUsername { get; set; }
+        public string SaslPassword { get; set; }
 
         /// <summary>
         /// The SSL hostname. You must set this if you are using SSL.
@@ -62,5 +70,6 @@ namespace NetIrc2
             get;
             set;
         }
+
     }
 }

@@ -272,6 +272,13 @@ namespace NetIrc2
         /// <summary>
         /// States that a mode change on a nickname included an unknown flag.
         /// </summary>
-        UnknownModeFlag = 501
+        UnknownModeFlag = 501,
+        
+        RplLoggedOut = 901,
+        ErrNickLocked = 902,
+        ErrSaslFail = 904,
+        ErrSaslTooLong = 905,
+        ErrSaslAborted = 906,
+        ErrSaslAlready = 907
     }
 }

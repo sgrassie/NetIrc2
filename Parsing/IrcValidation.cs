@@ -26,6 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
+using System.Diagnostics;
 using System.Linq;
 
 namespace NetIrc2.Parsing
@@ -202,6 +203,14 @@ namespace NetIrc2.Parsing
             else if (statement.Command.Length > 0 && statement.Command.All(x => x >= (byte)'A' && x <= (byte)'Z'))
             {
                 // Command is letters.
+            }
+            else if (statement.Command.StartsWith("CAP"))
+            {
+                // Command is CAP
+            }
+            else if (statement.Command.StartsWith("AUTHENTICATE"))
+            {
+                // Command is SASl Authentication
             }
             else
             {

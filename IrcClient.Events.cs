@@ -161,6 +161,11 @@ namespace NetIrc2
         /// </summary>
         public event EventHandler<SimpleMessageEventArgs> GotWelcomeMessage;
 
+        /// <summary>
+        /// Called when a capability negotiation is received.
+        /// </summary>
+        public event EventHandler<CapabilityNegotiationEventArgs> GotCapabilityChange;
+
         protected virtual void OnConnected()
         {
             RaiseConnected();
